@@ -177,13 +177,12 @@ fn create_gpu_buffer() {
     };
     let (buffer, allocation, allocation_info) = allocator
         .create_buffer(
-            &erupt::vk::BufferCreateInfoBuilder::new()
+            &*erupt::vk::BufferCreateInfoBuilder::new()
                 .size(16 * 1024)
                 .usage(
                     erupt::vk::BufferUsageFlags::VERTEX_BUFFER
                         | erupt::vk::BufferUsageFlags::TRANSFER_DST,
-                )
-                .build(),
+                ),
             &allocation_info,
         )
         .unwrap();
@@ -204,13 +203,12 @@ fn create_cpu_buffer_preferred() {
     };
     let (buffer, allocation, allocation_info) = allocator
         .create_buffer(
-            &erupt::vk::BufferCreateInfoBuilder::new()
+            &*erupt::vk::BufferCreateInfoBuilder::new()
                 .size(16 * 1024)
                 .usage(
                     erupt::vk::BufferUsageFlags::VERTEX_BUFFER
                         | erupt::vk::BufferUsageFlags::TRANSFER_DST,
-                )
-                .build(),
+                ),
             &allocation_info,
         )
         .unwrap();
@@ -223,12 +221,11 @@ fn create_gpu_buffer_pool() {
     let harness = TestHarness::new();
     let allocator = harness.create_allocator();
 
-    let buffer_info = erupt::vk::BufferCreateInfoBuilder::new()
+    let buffer_info = *erupt::vk::BufferCreateInfoBuilder::new()
         .size(16 * 1024)
         .usage(
             erupt::vk::BufferUsageFlags::UNIFORM_BUFFER | erupt::vk::BufferUsageFlags::TRANSFER_DST,
-        )
-        .build();
+        );
 
     let mut allocation_info = vk_mem_erupt::AllocationCreateInfo {
         required_flags: erupt::vk::MemoryPropertyFlags::HOST_VISIBLE,
@@ -276,13 +273,12 @@ fn test_gpu_stats() {
 
     let (buffer, allocation, _allocation_info) = allocator
         .create_buffer(
-            &erupt::vk::BufferCreateInfoBuilder::new()
+            &*erupt::vk::BufferCreateInfoBuilder::new()
                 .size(16 * 1024)
                 .usage(
                     erupt::vk::BufferUsageFlags::VERTEX_BUFFER
                         | erupt::vk::BufferUsageFlags::TRANSFER_DST,
-                )
-                .build(),
+                ),
             &allocation_info,
         )
         .unwrap();
@@ -314,13 +310,12 @@ fn test_stats_string() {
 
     let (buffer, allocation, _allocation_info) = allocator
         .create_buffer(
-            &erupt::vk::BufferCreateInfoBuilder::new()
+            &*erupt::vk::BufferCreateInfoBuilder::new()
                 .size(16 * 1024)
                 .usage(
                     erupt::vk::BufferUsageFlags::VERTEX_BUFFER
                         | erupt::vk::BufferUsageFlags::TRANSFER_DST,
-                )
-                .build(),
+                ),
             &allocation_info,
         )
         .unwrap();
