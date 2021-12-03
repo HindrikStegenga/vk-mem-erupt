@@ -1,6 +1,9 @@
 vk-mem-erupt
 ========
 
+**Please make an issue/PR if the crate is out of date and I haven't updated it yet.**
+
+
 [![vk-mem on travis-ci.com](https://travis-ci.com/gwihlidal/vk-mem-rs.svg?branch=master)](https://travis-ci.com/gwihlidal/vk-mem-rs)
 [![Latest version](https://img.shields.io/crates/v/vk-mem.svg)](https://crates.io/crates/vk-mem)
 [![Documentation](https://docs.rs/vk-mem/badge.svg)](https://docs.rs/vk-mem)
