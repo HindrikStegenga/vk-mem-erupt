@@ -29,7 +29,7 @@ travis-ci = { repository = "gwihlidal/vk-mem-rs" }
 maintenance = { status = "actively-developed" }
 
 [dependencies]
-erupt = "0.21.0+202"
+erupt = "0.22.0+204"
 bitflags = "1.2.1"
 failure = { version = "0.1.7", optional = true }
 
