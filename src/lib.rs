@@ -862,6 +862,18 @@ impl Allocator {
         let device = create_info.device.clone();
         let routed_functions = unsafe {
             ffi::VmaVulkanFunctions {
+                vkGetInstanceProcAddr: mem::transmute::<
+                    _,
+                    ffi::PFN_vkGetInstanceProcAddr,
+                >(
+                    instance.get_instance_proc_addr
+                ),
+                vkGetDeviceProcAddr: mem::transmute::<
+                    _,
+                    ffi::PFN_vkGetDeviceProcAddr,
+                >(
+                    instance.get_device_proc_addr
+                ),
                 vkGetPhysicalDeviceProperties: mem::transmute::<
                     _,
                     ffi::PFN_vkGetPhysicalDeviceProperties,
