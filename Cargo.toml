@@ -1,6 +1,6 @@
 [package]
 name = "vk-mem-erupt"
-version = "0.2.4"
+version = "0.3.0"
 authors = ["Hindrik Stegenga <mail@hindrik.dev>", "Graham Wihlidal <graham@wihlidal.ca>"]
 description = "Rust ffi bindings and idiomatic wrapper for AMD Vulkan Memory Allocator (VMA) using erupt."
 homepage = "https://github.com/HindrikStegenga/vk-mem-rs"
@@ -29,7 +29,7 @@ travis-ci = { repository = "gwihlidal/vk-mem-rs" }
 maintenance = { status = "actively-developed" }
 
 [dependencies]
-erupt = "0.22.0+204"
+erupt = "0.23.0+213"
 bitflags = "1.2.1"
 failure = { version = "0.1.7", optional = true }
 

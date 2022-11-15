@@ -13,6 +13,7 @@ pub mod ffi;
 pub use crate::error::{Error, ErrorKind, Result};
 use std::mem;
 use std::sync::Arc;
+use erupt::ObjectHandle;
 
 /// Main allocator object
 pub struct Allocator {
@@ -957,9 +958,9 @@ impl Allocator {
             }
         };
         let ffi_create_info = ffi::VmaAllocatorCreateInfo {
-            physicalDevice: create_info.physical_device.object_handle() as ffi::VkPhysicalDevice,
-            device: create_info.device.handle.object_handle() as ffi::VkDevice,
-            instance: instance.handle.object_handle() as ffi::VkInstance,
+            physicalDevice: create_info.physical_device.to_raw() as ffi::VkPhysicalDevice,
+            device: create_info.device.handle.to_raw() as ffi::VkDevice,
+            instance: instance.handle.to_raw() as ffi::VkInstance,
             flags: create_info.flags.bits(),
             frameInUseCount: create_info.frame_in_use_count,
             preferredLargeHeapBlockSize: create_info.preferred_large_heap_block_size as u64,
@@ -1339,7 +1340,7 @@ impl Allocator {
         buffer: erupt::vk::Buffer,
         allocation_info: &AllocationCreateInfo,
     ) -> Result<(Allocation, AllocationInfo)> {
-        let ffi_buffer = buffer.object_handle() as ffi::VkBuffer;
+        let ffi_buffer = buffer.to_raw() as ffi::VkBuffer;
         let create_info = allocation_create_info_to_ffi(&allocation_info);
         let mut allocation: Allocation = unsafe { mem::zeroed() };
         let mut allocation_info: AllocationInfo = unsafe { mem::zeroed() };
@@ -1366,7 +1367,7 @@ impl Allocator {
         image: erupt::vk::Image,
         allocation_info: &AllocationCreateInfo,
     ) -> Result<(Allocation, AllocationInfo)> {
-        let ffi_image = image.object_handle() as ffi::VkImage;
+        let ffi_image = image.to_raw() as ffi::VkImage;
         let create_info = allocation_create_info_to_ffi(&allocation_info);
         let mut allocation: Allocation = unsafe { mem::zeroed() };
         let mut allocation_info: AllocationInfo = unsafe { mem::zeroed() };
@@ -1660,7 +1661,7 @@ impl Allocator {
             maxCpuAllocationsToMove: info.max_cpu_allocations_to_move,
             maxGpuBytesToMove: info.max_gpu_bytes_to_move,
             maxGpuAllocationsToMove: info.max_gpu_allocations_to_move,
-            commandBuffer: command_buffer.object_handle() as ffi::VkCommandBuffer,
+            commandBuffer: command_buffer.to_raw() as ffi::VkCommandBuffer,
         };
         let result = ffi_to_result(unsafe {
             ffi::vmaDefragmentationBegin(
@@ -1817,7 +1818,7 @@ impl Allocator {
             ffi::vmaBindBufferMemory(
                 self.internal,
                 allocation.internal,
-                buffer.object_handle() as ffi::VkBuffer,
+                buffer.to_raw() as ffi::VkBuffer,
             )
         });
         match result {
@@ -1848,7 +1849,7 @@ impl Allocator {
             ffi::vmaBindImageMemory(
                 self.internal,
                 allocation.internal,
-                image.object_handle() as ffi::VkImage,
+                image.to_raw() as ffi::VkImage,
             )
         });
         match result {
@@ -1916,7 +1917,7 @@ impl Allocator {
         unsafe {
             ffi::vmaDestroyBuffer(
                 self.internal,
-                buffer.object_handle() as ffi::VkBuffer,
+                buffer.to_raw() as ffi::VkBuffer,
                 allocation.internal,
             );
         }
@@ -1983,7 +1984,7 @@ impl Allocator {
         unsafe {
             ffi::vmaDestroyImage(
                 self.internal,
-                image.object_handle() as ffi::VkImage,
+                image.to_raw() as ffi::VkImage,
                 allocation.internal,
             );
         }
