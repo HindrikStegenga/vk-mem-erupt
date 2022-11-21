@@ -1,10 +1,11 @@
 extern crate erupt;
 extern crate vk_mem_erupt;
 
-use erupt::extensions::ext_debug_report::*;
-//use std::os::raw::{c_char, c_void};
-use erupt::DeviceLoader;
 use std::sync::Arc;
+
+//use std::os::raw::{c_char, c_void};
+use erupt::extensions::ext_debug_report::*;
+use erupt::DeviceLoader;
 
 fn extension_names() -> Vec<*const i8> {
     vec![EXT_DEBUG_REPORT_EXTENSION_NAME, erupt::extensions::khr_get_physical_device_properties2::KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME]
@@ -43,6 +44,7 @@ impl Drop for TestHarness {
         }
     }
 }
+
 impl TestHarness {
     pub fn new() -> Self {
         let app_name = ::std::ffi::CString::new("vk-mem testing").unwrap();
@@ -67,7 +69,7 @@ impl TestHarness {
 
         let entry = erupt::EntryLoader::new().unwrap();
         let instance: erupt::InstanceLoader = unsafe {
-            erupt::InstanceLoader::new(&entry, &create_info, None).expect("Instance creation error")
+            erupt::InstanceLoader::new(&entry, &create_info).expect("Instance creation error")
         };
 
         // let debug_info = erupt::vk::DebugReportCallbackCreateInfoEXT::builder()
@@ -94,16 +96,13 @@ impl TestHarness {
         let (physical_device, queue_family_index) = unsafe {
             physical_devices
                 .iter()
-                .map(|physical_device| {
+                .filter_map(|physical_device| {
                     instance
                         .get_physical_device_queue_family_properties(*physical_device, None)
                         .iter()
                         .enumerate()
-                        .filter_map(|(index, _)| Some((*physical_device, index)))
-                        .nth(0)
-                })
-                .filter_map(|v| v)
-                .nth(0)
+                        .filter_map(|(index, _)| Some((*physical_device, index))).next()
+                }).next()
                 .expect("Couldn't find suitable device.")
         };
 
@@ -123,9 +122,8 @@ impl TestHarness {
             .queue_create_infos(&queue_info)
             .enabled_extension_names(&layers_names_raw);
 
-        let device: erupt::DeviceLoader = unsafe {
-            DeviceLoader::new(&instance, physical_device, &device_create_info, None).unwrap()
-        };
+        let device: erupt::DeviceLoader =
+            unsafe { DeviceLoader::new(&instance, physical_device, &device_create_info).unwrap() };
 
         TestHarness {
             entry,
@@ -177,7 +175,7 @@ fn create_gpu_buffer() {
     };
     let (buffer, allocation, allocation_info) = allocator
         .create_buffer(
-            &*erupt::vk::BufferCreateInfoBuilder::new()
+            &erupt::vk::BufferCreateInfoBuilder::new()
                 .size(16 * 1024)
                 .usage(
                     erupt::vk::BufferUsageFlags::VERTEX_BUFFER
@@ -203,7 +201,7 @@ fn create_cpu_buffer_preferred() {
     };
     let (buffer, allocation, allocation_info) = allocator
         .create_buffer(
-            &*erupt::vk::BufferCreateInfoBuilder::new()
+            &erupt::vk::BufferCreateInfoBuilder::new()
                 .size(16 * 1024)
                 .usage(
                     erupt::vk::BufferUsageFlags::VERTEX_BUFFER
@@ -273,7 +271,7 @@ fn test_gpu_stats() {
 
     let (buffer, allocation, _allocation_info) = allocator
         .create_buffer(
-            &*erupt::vk::BufferCreateInfoBuilder::new()
+            &erupt::vk::BufferCreateInfoBuilder::new()
                 .size(16 * 1024)
                 .usage(
                     erupt::vk::BufferUsageFlags::VERTEX_BUFFER
@@ -306,11 +304,11 @@ fn test_stats_string() {
     };
 
     let stats_1 = allocator.build_stats_string(true).unwrap();
-    assert!(stats_1.len() > 0);
+    assert!(!stats_1.is_empty());
 
     let (buffer, allocation, _allocation_info) = allocator
         .create_buffer(
-            &*erupt::vk::BufferCreateInfoBuilder::new()
+            &erupt::vk::BufferCreateInfoBuilder::new()
                 .size(16 * 1024)
                 .usage(
                     erupt::vk::BufferUsageFlags::VERTEX_BUFFER
@@ -321,13 +319,13 @@ fn test_stats_string() {
         .unwrap();
 
     let stats_2 = allocator.build_stats_string(true).unwrap();
-    assert!(stats_2.len() > 0);
+    assert!(!stats_2.is_empty());
     assert_ne!(stats_1, stats_2);
 
     allocator.destroy_buffer(buffer, &allocation);
 
     let stats_3 = allocator.build_stats_string(true).unwrap();
-    assert!(stats_3.len() > 0);
+    assert!(!stats_3.is_empty());
     assert_ne!(stats_3, stats_1);
     assert_ne!(stats_3, stats_2);
 }

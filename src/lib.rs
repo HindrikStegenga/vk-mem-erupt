@@ -1100,7 +1100,7 @@ impl Allocator {
         memory_type_bits: u32,
         allocation_info: &AllocationCreateInfo,
     ) -> Result<u32> {
-        let create_info = allocation_create_info_to_ffi(&allocation_info);
+        let create_info = allocation_create_info_to_ffi(allocation_info);
         let mut memory_type_index: u32 = 0;
         let result = ffi_to_result(unsafe {
             ffi::vmaFindMemoryTypeIndex(
@@ -1131,7 +1131,7 @@ impl Allocator {
         buffer_info: &erupt::vk::BufferCreateInfo,
         allocation_info: &AllocationCreateInfo,
     ) -> Result<u32> {
-        let allocation_create_info = allocation_create_info_to_ffi(&allocation_info);
+        let allocation_create_info = allocation_create_info_to_ffi(allocation_info);
         let buffer_create_info = unsafe {
             mem::transmute::<erupt::vk::BufferCreateInfo, ffi::VkBufferCreateInfo>(*buffer_info)
         };
@@ -1165,7 +1165,7 @@ impl Allocator {
         image_info: &erupt::vk::ImageCreateInfo,
         allocation_info: &AllocationCreateInfo,
     ) -> Result<u32> {
-        let allocation_create_info = allocation_create_info_to_ffi(&allocation_info);
+        let allocation_create_info = allocation_create_info_to_ffi(allocation_info);
         let image_create_info = unsafe {
             mem::transmute::<erupt::vk::ImageCreateInfo, ffi::VkImageCreateInfo>(*image_info)
         };
@@ -1187,7 +1187,7 @@ impl Allocator {
     /// Allocates Vulkan device memory and creates `AllocatorPool` object.
     pub fn create_pool(&self, pool_info: &AllocatorPoolCreateInfo) -> Result<AllocatorPool> {
         let mut ffi_pool: ffi::VmaPool = unsafe { mem::zeroed() };
-        let create_info = pool_create_info_to_ffi(&pool_info);
+        let create_info = pool_create_info_to_ffi(pool_info);
         let result = ffi_to_result(unsafe {
             ffi::vmaCreatePool(self.internal, &create_info, &mut ffi_pool)
         });
@@ -1222,7 +1222,7 @@ impl Allocator {
         unsafe {
             ffi::vmaMakePoolAllocationsLost(self.internal, pool.internal, &mut lost_count);
         }
-        Ok(lost_count as usize)
+        Ok(lost_count)
     }
 
     /// Checks magic number in margins around all allocations in given memory pool in search for corruptions.
@@ -1262,7 +1262,7 @@ impl Allocator {
                 *memory_requirements,
             )
         };
-        let create_info = allocation_create_info_to_ffi(&allocation_info);
+        let create_info = allocation_create_info_to_ffi(allocation_info);
         let mut allocation: Allocation = unsafe { mem::zeroed() };
         let mut allocation_info: AllocationInfo = unsafe { mem::zeroed() };
         let result = ffi_to_result(unsafe {
@@ -1300,7 +1300,7 @@ impl Allocator {
                 *memory_requirements,
             )
         };
-        let create_info = allocation_create_info_to_ffi(&allocation_info);
+        let create_info = allocation_create_info_to_ffi(allocation_info);
         let mut allocations: Vec<ffi::VmaAllocation> =
             vec![unsafe { mem::zeroed() }; allocation_count];
         let mut allocation_info: Vec<ffi::VmaAllocationInfo> =
@@ -1341,7 +1341,7 @@ impl Allocator {
         allocation_info: &AllocationCreateInfo,
     ) -> Result<(Allocation, AllocationInfo)> {
         let ffi_buffer = buffer.to_raw() as ffi::VkBuffer;
-        let create_info = allocation_create_info_to_ffi(&allocation_info);
+        let create_info = allocation_create_info_to_ffi(allocation_info);
         let mut allocation: Allocation = unsafe { mem::zeroed() };
         let mut allocation_info: AllocationInfo = unsafe { mem::zeroed() };
         let result = ffi_to_result(unsafe {
@@ -1368,7 +1368,7 @@ impl Allocator {
         allocation_info: &AllocationCreateInfo,
     ) -> Result<(Allocation, AllocationInfo)> {
         let ffi_image = image.to_raw() as ffi::VkImage;
-        let create_info = allocation_create_info_to_ffi(&allocation_info);
+        let create_info = allocation_create_info_to_ffi(allocation_info);
         let mut allocation: Allocation = unsafe { mem::zeroed() };
         let mut allocation_info: AllocationInfo = unsafe { mem::zeroed() };
         let result = ffi_to_result(unsafe {
@@ -1640,7 +1640,7 @@ impl Allocator {
             None => erupt::vk::CommandBuffer::null(),
         };
         let mut pools: Vec<ffi::VmaPool> = match info.pools {
-            Some(ref pools) => pools.iter().map(|pool| pool.internal).collect(),
+            Some(pools) => pools.iter().map(|pool| pool.internal).collect(),
             None => Vec::new(),
         };
         let mut allocations: Vec<ffi::VmaAllocation> =
@@ -1879,7 +1879,7 @@ impl Allocator {
         let buffer_create_info = unsafe {
             mem::transmute::<erupt::vk::BufferCreateInfo, ffi::VkBufferCreateInfo>(*buffer_info)
         };
-        let allocation_create_info = allocation_create_info_to_ffi(&allocation_info);
+        let allocation_create_info = allocation_create_info_to_ffi(allocation_info);
         let mut buffer: ffi::VkBuffer = unsafe { mem::zeroed() };
         let mut allocation: Allocation = unsafe { mem::zeroed() };
         let mut allocation_info: AllocationInfo = unsafe { mem::zeroed() };
@@ -1948,7 +1948,7 @@ impl Allocator {
         let image_create_info = unsafe {
             mem::transmute::<erupt::vk::ImageCreateInfo, ffi::VkImageCreateInfo>(*image_info)
         };
-        let allocation_create_info = allocation_create_info_to_ffi(&allocation_info);
+        let allocation_create_info = allocation_create_info_to_ffi(allocation_info);
         let mut image: ffi::VkImage = unsafe { mem::zeroed() };
         let mut allocation: Allocation = unsafe { mem::zeroed() };
         let mut allocation_info: AllocationInfo = unsafe { mem::zeroed() };
